@@ -1,0 +1,45 @@
+# ─── Web Framework ────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# ─── Database ─────────────────────────────────────────────
+sqlalchemy==2.0.30
+aiomysql==0.2.0
+alembic==1.13.1
+pymysql==1.1.1
+
+# ─── Redis ────────────────────────────────────────────────
+redis==5.0.4
+aioredis==2.0.1
+
+# ─── Kafka ────────────────────────────────────────────────
+aiokafka==0.10.0
+kafka-python==2.0.2
+
+# ─── Auth ─────────────────────────────────────────────────
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.1
+
+# ─── Validation ───────────────────────────────────────────
+pydantic==2.7.1
+pydantic-settings==2.2.1
+email-validator==2.1.1
+
+# ─── AI / ML ──────────────────────────────────────────────
+scikit-learn==1.4.2
+spacy==3.7.4
+numpy==1.26.4
+scipy==1.13.0
+pandas==2.2.2
+
+# ─── HTTP Client ──────────────────────────────────────────
+httpx==0.27.0
+aiohttp==3.9.5
+
+# ─── Utilities ────────────────────────────────────────────
+python-slugify==8.0.4
+Pillow==10.3.0
+loguru==0.7.2
+celery==5.3.6
