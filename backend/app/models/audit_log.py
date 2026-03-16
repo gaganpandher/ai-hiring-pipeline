@@ -1,68 +1,56 @@
-from sqlalchemy import (
-    Column, String, Text, Enum, DateTime,
-    ForeignKey, JSON
-)
-from sqlalchemy.dialects.mysql import CHAR
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 import uuid
-import enum
-
+from datetime import datetime, timezone
+from sqlalchemy import (
+    Column, String, DateTime,
+    ForeignKey, JSON, Index,
+    Enum as SAEnum, text
+)
+from sqlalchemy.orm import relationship
 from app.core.database import Base
+import enum
 
 
 class AuditAction(str, enum.Enum):
-    # Auth
-    USER_REGISTER       = "user.register"
-    USER_LOGIN          = "user.login"
-    USER_LOGOUT         = "user.logout"
-    # Jobs
-    JOB_CREATED         = "job.created"
-    JOB_UPDATED         = "job.updated"
-    JOB_CLOSED          = "job.closed"
-    # Applications
-    APPLICATION_SUBMIT  = "application.submit"
-    APPLICATION_REVIEW  = "application.review"
-    APPLICATION_SHORTLIST = "application.shortlist"
-    APPLICATION_REJECT  = "application.reject"
-    APPLICATION_HIRE    = "application.hire"
-    APPLICATION_WITHDRAW = "application.withdraw"
-    # Scoring
-    SCORE_GENERATED     = "score.generated"
-    # Bias
-    BIAS_DETECTED       = "bias.detected"
-    BIAS_RESOLVED       = "bias.resolved"
+    USER_REGISTERED       = "user_registered"
+    USER_LOGIN            = "user_login"
+    USER_LOGOUT           = "user_logout"
+    JOB_CREATED           = "job_created"
+    JOB_UPDATED           = "job_updated"
+    JOB_STATUS_CHANGED    = "job_status_changed"
+    APPLICATION_SUBMITTED  = "application_submitted"
+    APPLICATION_SCORED     = "application_scored"
+    APPLICATION_REVIEWED   = "application_reviewed"
+    APPLICATION_SHORTLISTED = "application_shortlisted"
+    APPLICATION_REJECTED   = "application_rejected"
+    APPLICATION_HIRED      = "application_hired"
+    BIAS_FLAG_CREATED      = "bias_flag_created"
+    BIAS_FLAG_RESOLVED     = "bias_flag_resolved"
 
 
 class AuditLog(Base):
-    """
-    Immutable append-only log of every significant action.
-    Also mirrored to the Kafka audit-log topic.
-    No UPDATE or DELETE should ever run on this table.
-    """
-    __tablename__ = "audit_logs"
+    __tablename__ = "audit_log"
 
-    id           = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    actor_id     = Column(CHAR(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    id         = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    actor_id   = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    actor_email = Column(String(255), nullable=True)
+    actor_role  = Column(String(50),  nullable=True)
+    action      = Column(SAEnum(AuditAction), nullable=False, index=True)
+    entity_type = Column(String(50),  nullable=True)
+    entity_id   = Column(String(36),  nullable=True, index=True)
+    payload     = Column(JSON, nullable=True)
+    ip_address  = Column(String(45),  nullable=True)
+    user_agent  = Column(String(300), nullable=True)
+    created_at  = Column(DateTime, default=lambda: datetime.now(timezone.utc),
+                         server_default=text("CURRENT_TIMESTAMP"), nullable=False, index=True)
 
-    action       = Column(Enum(AuditAction), nullable=False, index=True)
+    actor = relationship("User", back_populates="audit_logs")
 
-    # What entity was affected
-    entity_type  = Column(String(50), nullable=True)   # e.g. "application"
-    entity_id    = Column(CHAR(36), nullable=True, index=True)
-
-    # Full snapshot of changes (before/after)
-    payload      = Column(JSON, default=dict)
-
-    # Request metadata
-    ip_address   = Column(String(45), nullable=True)
-    user_agent   = Column(String(500), nullable=True)
-
-    # Timestamp (no updated_at — this is append-only)
-    created_at   = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
-
-    # Relationships
-    actor        = relationship("User", back_populates="audit_logs")
+    __table_args__ = (
+        Index("ix_audit_entity",        "entity_type", "entity_id"),
+        Index("ix_audit_created_action","created_at",  "action"),
+        Index("ix_audit_actor_created", "actor_id",    "created_at"),
+        {"comment": "Immutable audit trail"},
+    )
 
     def __repr__(self):
-        return f"<AuditLog {self.action} by {self.actor_id} on {self.entity_type}:{self.entity_id}>"
+        return f"<AuditLog action={self.action} actor={self.actor_id}>"

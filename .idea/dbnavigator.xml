@@ -4,8 +4,22 @@
     <mappings />
     <preferences />
   </component>
+  <component name="DBNavigator.Project.DataEditorManager">
+    <record-view-column-sorting-type value="BY_INDEX" />
+    <value-preview-text-wrapping value="true" />
+    <value-preview-pinned value="false" />
+  </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
+      <assistant-state connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="784901c2-faf9-4c9a-95f2-657da511797d" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+      </assistant-state>
       <assistant-state connection-id="784901c2-faf9-4c9a-95f2-657da511797d" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
       </assistant-state>
@@ -17,24 +31,64 @@
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="784901c2-faf9-4c9a-95f2-657da511797d">
+    <connection id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363">
       <console name="Connection" type="STANDARD" schema="hiring_db" session="Main" />
     </connection>
   </component>
+  <component name="DBNavigator.Project.DatabaseEditorStateManager">
+    <last-used-providers />
+  </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="consoles/Connection" />
+      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/users" />
+    </open-files>
+  </component>
+  <component name="DBNavigator.Project.DatabasePrerequisiteManager">
+    <prerequisites />
+  </component>
+  <component name="DBNavigator.Project.DatabaseSessionManager">
+    <connection id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.audit_log" active-filter-id="86d15d6a-71e0-41c3-bd70-733873dcdf74">
+      <filter id="86d15d6a-71e0-41c3-bd70-733873dcdf74" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is not null" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.users" active-filter-id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3">
+      <filter id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is not null" value="" active="true" />
+      </filter>
+    </filter-actions>
+  </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
+  <component name="DBNavigator.Project.MethodExecutionManager">
+    <method-browser />
+    <execution-history>
+      <group-entries value="true" />
+      <execution-inputs />
+    </execution-history>
+    <execution-variables-cache />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />
   </component>
+  <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="false">
+    <recently-used-interfaces>
+      <mapping database-type="MYSQL" interface-id="DEFAULT" />
+    </recently-used-interfaces>
+  </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection source-id="" id="784901c2-faf9-4c9a-95f2-657da511797d" active="true" signed="true">
+      <connection source-id="" id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />
@@ -118,7 +172,7 @@
         </debugger>
         <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
           <object-filters />
-          <object-type-filter use-master-settings="true">
+          <object-type-filter use-master-settings="false">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
             <object-type name="ROLE" enabled="true" />
@@ -131,7 +185,7 @@
             <object-type name="NESTED_TABLE" enabled="true" />
             <object-type name="COLUMN" enabled="true" />
             <object-type name="INDEX" enabled="true" />
-            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="false" />
             <object-type name="DATASET_TRIGGER" enabled="true" />
             <object-type name="DATABASE_TRIGGER" enabled="true" />
             <object-type name="SYNONYM" enabled="true" />
@@ -158,7 +212,7 @@
     </connections>
     <browser-settings>
       <general>
-        <display-mode value="TABBED" />
+        <display-mode value="SELECTOR" />
         <navigation-history-size value="100" />
         <show-object-details value="false" />
         <enable-sticky-paths value="true" />
@@ -318,7 +372,7 @@
         <enable-reference-spellchecking value="false" />
       </general>
       <confirmations>
-        <save-changes value="false" />
+        <save-changes value="true" />
         <revert-changes value="true" />
         <exit-on-changes value="ASK" />
       </confirmations>
@@ -585,5 +639,9 @@
         </visibility-settings>
       </environment>
     </general-settings>
+  </component>
+  <component name="DBNavigator.Project.StatementExecutionManager">
+    <execution-variables />
+    <execution-variable-types />
   </component>
 </project>

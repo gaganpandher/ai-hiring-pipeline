@@ -1,26 +1,26 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-# ─── Password ─────────────────────────────────────────────
-
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    pwd_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(
+        plain.encode("utf-8"),
+        hashed.encode("utf-8")
+    )
 
-
-# ─── JWT ──────────────────────────────────────────────────
 
 def create_access_token(subject: str | Any, extra: dict = {}) -> str:
     expire = datetime.now(timezone.utc) + timedelta(
@@ -51,18 +51,14 @@ def decode_token(token: str) -> dict:
         ) from e
 
 
-# ─── Role constants ───────────────────────────────────────
-
 class Role:
-    ADMIN = "admin"
+    ADMIN     = "admin"
     RECRUITER = "recruiter"
     APPLICANT = "applicant"
-
-    ALL = [ADMIN, RECRUITER, APPLICANT]
+    ALL       = [ADMIN, RECRUITER, APPLICANT]
 
 
 def require_roles(*roles: str):
-    """FastAPI dependency factory to enforce role-based access."""
     from app.core.database import get_db
     from sqlalchemy.ext.asyncio import AsyncSession
 
