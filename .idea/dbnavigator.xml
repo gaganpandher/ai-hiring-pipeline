@@ -36,7 +36,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363">
-      <console name="Connection" type="STANDARD" schema="hiring_db" session="Main" />
+      <console name="Connection" type="STANDARD" schema="hiring_db" session="Main"><![CDATA[DELETE FROM applications WHERE resume_path LIKE '/app/%';
+DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -44,8 +45,10 @@
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
+      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/applications" />
       <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="consoles/Connection" />
-      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/users" />
+      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/audit_log" />
+      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/jobs" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabasePrerequisiteManager">
@@ -62,6 +65,19 @@
     </filter-actions>
     <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.users" active-filter-id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3">
       <filter id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is not null" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.jobs" active-filter-id="8d52c3cd-868f-4f43-9f1e-a0e73951652a">
+      <filter id="8d52c3cd-868f-4f43-9f1e-a0e73951652a" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is not null" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.applications" active-filter-id="fbf43da8-6247-42e9-8711-279fe844eace">
+      <filter id="baee28c1-841e-422e-864e-e3e5694ee1d6" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is null" value="" active="true" />
+      </filter>
+      <filter id="fbf43da8-6247-42e9-8711-279fe844eace" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">
         <condition column="id" operator="is not null" value="" active="true" />
       </filter>
     </filter-actions>

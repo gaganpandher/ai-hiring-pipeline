@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 import traceback
-
+from fastapi.responses import JSONResponse
 from app.core.database import get_db
 from app.core.security import oauth2_scheme
 from app.schemas.user import (
@@ -172,3 +172,29 @@ async def logout(
     ))
     await db.commit()
     return MessageResponse(message="Logged out successfully")
+
+#-------Token________
+@router.post(
+    "/token",
+    include_in_schema=False,  # hidden from Swagger docs list
+    summary="OAuth2 token endpoint for Swagger UI",
+)
+async def token_for_swagger(
+    request: Request,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Returns token in the flat format Swagger OAuth2 expects.
+    Not for frontend use — use /login/json instead.
+    """
+    result = await auth_service.login(
+        email=form_data.username,
+        password=form_data.password,
+        db=db,
+        ip_address=get_client_ip(request),
+    )
+    return JSONResponse({
+        "access_token": result.tokens.access_token,
+        "token_type": "bearer",
+    })
