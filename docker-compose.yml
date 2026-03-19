@@ -6,11 +6,12 @@ services:
     image: mysql:8.0
     container_name: hiring_mysql
     restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-hiring_db}
-      MYSQL_USER: ${MYSQL_USER:-hiring_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-hiring_pass}
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hiring_db
+      MYSQL_USER: hiring_user
+      MYSQL_PASSWORD: hiring_pass
     ports:
       - "3306:3306"
     volumes:

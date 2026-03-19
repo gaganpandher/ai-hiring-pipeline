@@ -6,21 +6,33 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
-      <assistant-state connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+      <assistant-state connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
         <tools />
       </assistant-state>
       <assistant-state connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
         <tools />
       </assistant-state>
-      <assistant-state connection-id="784901c2-faf9-4c9a-95f2-657da511797d" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+      <assistant-state connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
         <tools />
       </assistant-state>
       <assistant-state connection-id="784901c2-faf9-4c9a-95f2-657da511797d" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="784901c2-faf9-4c9a-95f2-657da511797d" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="virtual-mysql-connection" assistant-type="PUBLIC" default-profile-name="" selected-chat-id="" availability="AVAILABLE" acknowledgement="NONE" selected="true">
+        <tools />
+      </assistant-state>
+      <assistant-state connection-id="virtual-mysql-connection" assistant-type="SELECT_AI" default-profile-name="" selected-chat-id="" availability="UNAVAILABLE" acknowledgement="NONE">
         <tools />
       </assistant-state>
     </assistants>
@@ -35,9 +47,13 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363">
-      <console name="Connection" type="STANDARD" schema="hiring_db" session="Main"><![CDATA[DELETE FROM applications WHERE resume_path LIKE '/app/%';
-DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
+    <connection id="f67ed894-30ac-4428-9d0a-d8b7c28496da">
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[-- See funnel counts
+SELECT status, COUNT(*) as count
+FROM applications
+GROUP BY status;
+
+-- See department stats]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -45,39 +61,24 @@ DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/applications" />
-      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="consoles/Connection" />
-      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/audit_log" />
-      <object connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" object-ref="schemas/hiring_db/tables/jobs" />
+      <object connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" object-ref="schemas/hiring_db/tables/applications" />
+      <object connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" object-ref="consoles/Connection" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabasePrerequisiteManager">
     <prerequisites />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" />
+    <connection id="f67ed894-30ac-4428-9d0a-d8b7c28496da" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.audit_log" active-filter-id="86d15d6a-71e0-41c3-bd70-733873dcdf74">
-      <filter id="86d15d6a-71e0-41c3-bd70-733873dcdf74" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+    <filter-actions connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" dataset="hiring_db.audit_log" active-filter-id="4018b90c-fd77-4fc5-81ee-e64c72b16993">
+      <filter id="4018b90c-fd77-4fc5-81ee-e64c72b16993" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
         <condition column="id" operator="is not null" value="" active="true" />
       </filter>
     </filter-actions>
-    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.users" active-filter-id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3">
-      <filter id="e2ddc6b8-9fa4-4657-840b-1defb0eea6d3" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
-        <condition column="id" operator="is not null" value="" active="true" />
-      </filter>
-    </filter-actions>
-    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.jobs" active-filter-id="8d52c3cd-868f-4f43-9f1e-a0e73951652a">
-      <filter id="8d52c3cd-868f-4f43-9f1e-a0e73951652a" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
-        <condition column="id" operator="is not null" value="" active="true" />
-      </filter>
-    </filter-actions>
-    <filter-actions connection-id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" dataset="hiring_db.applications" active-filter-id="fbf43da8-6247-42e9-8711-279fe844eace">
-      <filter id="baee28c1-841e-422e-864e-e3e5694ee1d6" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
-        <condition column="id" operator="is null" value="" active="true" />
-      </filter>
-      <filter id="fbf43da8-6247-42e9-8711-279fe844eace" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">
+    <filter-actions connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" dataset="hiring_db.applications" active-filter-id="1515bc5c-7e66-4130-9102-136d389cd418">
+      <filter id="1515bc5c-7e66-4130-9102-136d389cd418" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
         <condition column="id" operator="is not null" value="" active="true" />
       </filter>
     </filter-actions>
@@ -104,7 +105,7 @@ DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection source-id="" id="5f2c73c4-ca4a-4c6d-a95e-82ece7e40363" active="true" signed="true">
+      <connection source-id="" id="f67ed894-30ac-4428-9d0a-d8b7c28496da" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />
@@ -188,7 +189,7 @@ DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
         </debugger>
         <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
           <object-filters />
-          <object-type-filter use-master-settings="false">
+          <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
             <object-type name="ROLE" enabled="true" />
@@ -201,7 +202,7 @@ DELETE FROM audit_log WHERE entity_type = 'application';]]></console>
             <object-type name="NESTED_TABLE" enabled="true" />
             <object-type name="COLUMN" enabled="true" />
             <object-type name="INDEX" enabled="true" />
-            <object-type name="CONSTRAINT" enabled="false" />
+            <object-type name="CONSTRAINT" enabled="true" />
             <object-type name="DATASET_TRIGGER" enabled="true" />
             <object-type name="DATABASE_TRIGGER" enabled="true" />
             <object-type name="SYNONYM" enabled="true" />
