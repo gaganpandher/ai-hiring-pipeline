@@ -20,6 +20,13 @@ export default function Jobs() {
   const [applyingToJob, setApplyingToJob] = useState<Job | null>(null)
   const queryClient = useQueryClient()
 
+  const { data: myAppsData } = useQuery({
+    queryKey: ['applications', 'mine'],
+    queryFn: () => applicationsApi.list({ per_page: 100 }),
+    enabled: !isRecruiter,
+  })
+  const appliedJobIds = new Set(myAppsData?.items?.map((a: any) => a.job.id) || [])
+
   const changeStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: JobStatus }) => jobsApi.changeStatus(id, status),
     onSuccess: () => {
@@ -68,12 +75,15 @@ export default function Jobs() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {jobs.map((job) => (
+          {jobs.map((job: Job) => (
             <div key={job.id} className="glass-panel p-6 flex flex-col dynamic-hover">
               <div className="flex justify-between items-start mb-4">
-                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
-                  {job.department}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
+                    {job.department}
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono bg-slate-100/50 px-2 py-1 rounded-md border border-slate-200/50">ID: {job.id}</span>
+                </div>
                 {isRecruiter && (
                   <select
                     value={job.status}
@@ -125,12 +135,18 @@ export default function Jobs() {
                 </div>
                 
                 {(!isRecruiter && job.status === 'open') && (
-                  <button
-                    onClick={() => setApplyingToJob(job)}
-                    className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
-                  >
-                    Apply Now →
-                  </button>
+                  appliedJobIds.has(job.id) ? (
+                    <span className="text-sm font-semibold text-emerald-500 flex items-center gap-1.5">
+                      <CheckCircle2 size={16} /> Applied
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => setApplyingToJob(job)}
+                      className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                    >
+                      Apply Now →
+                    </button>
+                  )
                 )}
               </div>
             </div>
@@ -153,6 +169,7 @@ export default function Jobs() {
 
 // ─── Create Job Modal ───────────────────────────────────────
 const createJobSchema = z.object({
+  id: z.string().max(36).regex(/^[A-Za-z0-9\-_]*$/, "Only letters, numbers, hyphens, and underscores allowed").optional().or(z.literal('')),
   title: z.string().min(3),
   department: z.string().min(2),
   description: z.string().min(50, 'Description must be at least 50 chars.'),
@@ -192,11 +209,17 @@ function CreateJobModal({ onClose }: { onClose: () => void }) {
         <h2 className="text-2xl font-bold text-slate-900 mb-6">Post New Job</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+            <input {...register('title')} className="w-full bg-white border border-slate-200 text-slate-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Senior AI Engineer" />
+            {errors.title && <p className="text-rose-400 text-xs mt-1">{errors.title.message as string}</p>}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
-              <input {...register('title')} className="w-full bg-white border border-slate-200 text-slate-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Senior AI Engineer" />
-              {errors.title && <p className="text-rose-400 text-xs mt-1">{errors.title.message as string}</p>}
+              <label className="block text-sm font-medium text-slate-700 mb-1">Custom Job ID (Optional)</label>
+              <input {...register('id')} className="w-full bg-white border border-slate-200 text-slate-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. ENG-101" />
+              {errors.id && <p className="text-rose-400 text-xs mt-1">{errors.id.message as string}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Department</label>

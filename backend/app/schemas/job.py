@@ -14,6 +14,7 @@ from app.schemas.user import UserSummary
 
 class JobCreate(Base):
     """Body of POST /jobs — recruiter creating a new job posting."""
+    id:               Optional[str]  = Field(None, max_length=36, pattern=r"^[A-Za-z0-9\-_]+$")
     title:            str            = Field(..., min_length=3, max_length=200)
     department:       str            = Field(..., min_length=2, max_length=100)
     location:         Optional[str]  = Field(None, max_length=150)

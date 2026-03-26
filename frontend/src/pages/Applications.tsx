@@ -85,7 +85,7 @@ export default function Applications() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50 text-slate-700">
-                {apps.map((app) => (
+                {apps.map((app: Application) => (
                   <tr key={app.id} className="hover:bg-slate-100/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="font-medium text-slate-900">{app.applicant.full_name}</div>
@@ -108,6 +108,7 @@ export default function Applications() {
                     <td className="px-6 py-4">
                       <div className="font-medium text-slate-800">{app.job.title}</div>
                       <div className="text-sm text-slate-500">{app.job.department}</div>
+                      <div className="text-xs text-slate-400 font-mono mt-1" title="Job ID">ID: {app.job.id}</div>
                     </td>
                     <td className="px-6 py-4">
                       {app.score ? (
