@@ -13,7 +13,7 @@ services:
       MYSQL_USER: hiring_user
       MYSQL_PASSWORD: hiring_pass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -113,6 +113,28 @@ services:
     env_file:
       - .env
     command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/requirements.txt:/app/requirements.txt
+      - backend_uploads:/app/uploads
+    networks:
+      - hiring_net
+
+  # ─── Scoring Worker ──────────────────────────────────────
+  scoring-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hiring_scoring_worker
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    env_file:
+      - .env
+    command: python -m app.consumers.scoring_consumer
     volumes:
       - ./backend/app:/app/app
       - ./backend/requirements.txt:/app/requirements.txt

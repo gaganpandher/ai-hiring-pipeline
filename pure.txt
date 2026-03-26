@@ -1,0 +1,94 @@
+docker : INFO:     Will watch for changes in these 
+directories: ['/app']
+At line:1 char:1
++ docker logs hiring_backend > backend_logs_signup.txt 
+2>&1; Get-Conten ...
++ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:       
+  Will ...ories: ['/app']:String) [], RemoteE    xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press 
+CTRL+C to quit)
+INFO:     Started reloader process [1] using WatchFiles
+INFO:     Started server process [8]
+INFO:     Waiting for application startup.
+2026-03-25 17:08:28.091 | INFO     | 
+app.main:lifespan:13 - ???? Starting AI Hiring Pipeline 
+[development]
+2026-03-25 17:08:28.759 | INFO     | 
+app.core.database:check_db_connection:59 - ??? MySQL 
+connection OK
+2026-03-25 17:08:29.909 | INFO     | 
+app.core.database:init_db:51 - ??? Database tables 
+initialised
+2026-03-25 17:08:29.917 | INFO     | 
+app.main:lifespan:21 - ??? MySQL ready ??? tables 
+created/verified
+2026-03-25 17:08:30.857 | INFO     | 
+app.core.redis:init_redis:25 - ??? Redis connection OK
+2026-03-25 17:08:30.858 | INFO     | 
+app.main:lifespan:31 - ??? Redis ready
+2026-03-25 17:08:31.406 | INFO     | 
+app.core.kafka:check_kafka_connection:115 - ??? Kafka 
+connection OK
+2026-03-25 17:08:31.489 | INFO     | 
+app.core.kafka:create_topics:38 - ??? All Kafka topics 
+already exist
+2026-03-25 17:08:31.494 | INFO     | 
+app.main:lifespan:41 - ??? Kafka ready ??? topics 
+created/verified
+2026-03-25 17:08:31.495 | INFO     | 
+app.main:lifespan:47 - ??? App ready ??? 
+http://localhost:8000/api/docs
+INFO:     Application startup complete.
+2026-03-25 17:08:28,702 INFO sqlalchemy.engine.Engine SELECT DATABASE()
+2026-03-25 17:08:28,704 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:28,735 INFO sqlalchemy.engine.Engine SELECT @@sql_mode
+2026-03-25 17:08:28,735 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:28,740 INFO sqlalchemy.engine.Engine SELECT @@lower_case_table_names
+2026-03-25 17:08:28,740 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:28,746 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-25 17:08:28,753 INFO sqlalchemy.engine.Engine SELECT 1
+2026-03-25 17:08:28,754 INFO sqlalchemy.engine.Engine [generated in 0.00079s] ()
+2026-03-25 17:08:28,757 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-25 17:08:28,761 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-25 17:08:28,762 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`users`
+2026-03-25 17:08:28,762 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,804 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`jobs`
+2026-03-25 17:08:29,804 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,847 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`applications`
+2026-03-25 17:08:29,848 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,868 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`scores`
+2026-03-25 17:08:29,868 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,877 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`bias_flags`
+2026-03-25 17:08:29,877 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,895 INFO sqlalchemy.engine.Engine DESCRIBE `hiring_db`.`audit_log`
+2026-03-25 17:08:29,895 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-25 17:08:29,911 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     172.18.0.1:49776 - "GET /docs HTTP/1.1" 404 Not Found
+INFO:     172.18.0.1:49776 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.18.0.1:50868 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.0.1:54962 - "GET / HTTP/1.1" 200 OK
+2026-03-25 17:10:05,613 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-25 17:10:05,679 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.password_hash, users.full_name, users.`role`, users.is_active, users.created_at, users.updated_at, users.last_login_at 
+FROM users 
+WHERE users.email = %s
+2026-03-25 17:10:05,679 INFO sqlalchemy.engine.Engine [generated in 0.00227s] ('recruiter@company.com',)
+2026-03-25 17:10:06,462 INFO sqlalchemy.engine.Engine UPDATE users SET updated_at=%s, last_login_at=%s WHERE users.id = %s
+2026-03-25 17:10:06,463 INFO sqlalchemy.engine.Engine [generated in 0.00059s] (datetime.datetime(2026, 3, 25, 17, 10, 6, 462688, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 3, 25, 17, 10, 6, 431487, tzinfo=datetime.timezone.utc), 'a4676ac9-3d77-44ff-a453-60615cf76d47')
+2026-03-25 17:10:06.579 | INFO     | 
+app.services.auth_service:login:170 - Login: 
+recruiter@company.com
+2026-03-25 17:10:06,533 INFO sqlalchemy.engine.Engine INSERT INTO audit_log (id, actor_id, actor_email, actor_role, action, entity_type, entity_id, ip_address, user_agent, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+2026-03-25 17:10:06,533 INFO sqlalchemy.engine.Engine [generated in 0.00037s] ('f7f3b516-200f-42d0-a264-a912b781e23e', 'a4676ac9-3d77-44ff-a453-60615cf76d47', 'recruiter@company.com', 'recruiter', 'USER_LOGIN', 'user', 'a4676ac9-3d77-44ff-a453-60615cf76d47', '172.18.0.1', None, datetime.datetime(2026, 3, 25, 17, 10, 6, 532974, tzinfo=datetime.timezone.utc))
+2026-03-25 17:10:06,555 INFO sqlalchemy.engine.Engine COMMIT
+2026-03-25 17:10:06,575 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-25 17:10:06,578 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.password_hash, users.full_name, users.`role`, users.is_active, users.created_at, users.updated_at, users.last_login_at 
+FROM users 
+WHERE users.id = %s
+2026-03-25 17:10:06,578 INFO sqlalchemy.engine.Engine [generated in 0.00026s] ('a4676ac9-3d77-44ff-a453-60615cf76d47',)
+INFO:     172.18.0.1:53600 - "POST /api/v1/auth/token HTTP/1.1" 200 OK
+2026-03-25 17:10:06,591 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     172.18.0.1:34652 - "GET /api/openapi.json HTTP/1.1" 200 OK

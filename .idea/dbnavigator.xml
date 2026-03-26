@@ -48,12 +48,9 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="f67ed894-30ac-4428-9d0a-d8b7c28496da">
-      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[-- See funnel counts
-SELECT status, COUNT(*) as count
-FROM applications
-GROUP BY status;
-
--- See department stats]]></console>
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[CREATE USER IF NOT EXISTS 'hiring_user'@'localhost' IDENTIFIED BY 'hiring_pass';
+GRANT ALL PRIVILEGES ON hiring_db.* TO 'hiring_user'@'localhost';
+FLUSH PRIVILEGES;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -62,6 +59,7 @@ GROUP BY status;
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
       <object connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" object-ref="schemas/hiring_db/tables/applications" />
+      <object connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" object-ref="schemas/hiring_db/tables/users" />
       <object connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" object-ref="consoles/Connection" />
     </open-files>
   </component>
@@ -74,6 +72,11 @@ GROUP BY status;
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" dataset="hiring_db.audit_log" active-filter-id="4018b90c-fd77-4fc5-81ee-e64c72b16993">
       <filter id="4018b90c-fd77-4fc5-81ee-e64c72b16993" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="is not null" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="f67ed894-30ac-4428-9d0a-d8b7c28496da" dataset="hiring_db.users" active-filter-id="a109c2e8-57c9-4e17-a69b-f0da03d4dece">
+      <filter id="a109c2e8-57c9-4e17-a69b-f0da03d4dece" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
         <condition column="id" operator="is not null" value="" active="true" />
       </filter>
     </filter-actions>

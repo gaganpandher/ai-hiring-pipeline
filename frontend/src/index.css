@@ -2,11 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-.loading-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-family: sans-serif;
-    color: #666;
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg-primary: #F8FAFC;
+    --bg-secondary: #FFFFFF;
+    --border-glass: rgba(0, 0, 0, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.8);
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: #0f172a;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Sleek Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[var(--glass-bg)] border border-[var(--border-glass)] backdrop-blur-xl shadow-xl;
+  }
+  
+  .dynamic-hover {
+    @apply transition-all duration-300 hover:shadow-2xl hover:border-indigo-500/30 hover:-translate-y-1;
+  }
 }

@@ -15,6 +15,7 @@ For local dev, you can start it manually alongside FastAPI.
 import asyncio
 import uuid
 import re
+import fitz
 from datetime import datetime, timezone
 from loguru import logger
 
@@ -100,9 +101,16 @@ async def handle_application(topic: str, message: dict):
         if resume_path and resume_path.endswith(".txt"):
             with open(resume_path, "r") as f:
                 resume_text = f.read()
+        elif resume_path and resume_path.endswith(".pdf"):
+            try:
+                with fitz.open(resume_path) as doc:
+                    resume_text = "\n".join(page.get_text() for page in doc)
+                logger.info(f"Successfully extracted {len(resume_text)} characters from PDF")
+            except Exception as pdf_err:
+                logger.error(f"Failed to read PDF {resume_path}: {pdf_err}")
+                resume_text = ""
         else:
-            # For PDF/docx — use filename as proxy text for now
-            # In production: use pdfplumber or python-docx to extract text
+            # Fallback for unrecognized files
             resume_text = resume_path or ""
     except Exception as e:
         logger.warning(f"Could not read resume {resume_path}: {e}")
