@@ -1,12 +1,12 @@
 # 🧠 AI Hiring Pipeline with Bias Detection
 
 A full-stack, event-driven hiring platform showcasing:
-- **MySQL** — normalised relational schema with complex analytical queries
+- **MySQL (v8.0)** — normalised relational schema with complex analytical queries
 - **FastAPI (Python)** — async REST API with JWT auth and RBAC
-- **Apache Kafka** — 6 real-time event topics
-- **React + TypeScript** — multi-portal frontend with analytics dashboard
-- **Redis** — session caching and rate limiting
-- **AI Services** — resume scoring and statistical bias detection
+- **Apache Kafka (v7.5)** — real-time event topics and dedicated worker processes
+- **React + TypeScript** — Vite, Zustand, React Query, TailwindCSS, Recharts
+- **Redis (v7)** — session caching and rate limiting
+- **AI Services** — PyMuPDF for parsing, spaCy for scoring, statistical bias detection
 
 ---
 
@@ -21,18 +21,19 @@ ai-hiring-pipeline/
 │   │   ├── models/       # SQLAlchemy ORM models
 │   │   ├── schemas/      # Pydantic request/response schemas
 │   │   ├── services/     # Business logic
-│   │   └── consumers/    # Kafka consumer workers
+│   │   └── consumers/    # Kafka consumer workers (e.g., scoring_consumer)
 │   ├── alembic/          # DB migrations
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
 │   │   ├── api/          # Axios client + API hooks
-│   │   ├── components/   # Shared UI components
+│   │   ├── components/   # Shared & modular UI components
 │   │   ├── pages/        # Route-level pages
 │   │   ├── store/        # Zustand state stores
 │   │   └── hooks/        # Custom React hooks
 │   ├── package.json
+│   ├── vite.config.ts    # Vite configuration
 │   └── Dockerfile
 ├── docker/
 │   └── mysql/init.sql
@@ -105,13 +106,14 @@ React (port 3000)
 FastAPI (port 8000)
     ├── MySQL  — persistent relational data
     ├── Redis  — JWT sessions, caching
-    └── Kafka  — event streaming
-            ├── applications         ← new job submissions
-            ├── scoring-results      ← AI resume scores
-            ├── bias-alerts          ← statistical bias flags
-            ├── audit-log            ← immutable decision trail
-            ├── notifications        ← email/webhook triggers
-            └── recruiter-actions    ← hire / reject events
+    ├── Kafka  — event streaming
+    │       ├── applications         ← new job submissions
+    │       ├── scoring-results      ← AI resume scores
+    │       ├── bias-alerts          ← statistical bias flags
+    │       ├── audit-log            ← immutable decision trail
+    │       ├── notifications        ← email/webhook triggers
+    │       └── recruiter-actions    ← hire / reject events
+    └── Scoring Worker (Background Kafka Consumer)
 ```
 
 ---
@@ -128,8 +130,9 @@ FastAPI (port 8000)
 
 ## 📊 Key Features
 
-- **AI Resume Scoring** — spaCy NLP + sklearn scoring model
+- **AI Resume Scoring** — PyMuPDF for text extraction, spaCy NLP + sklearn scoring model
 - **Bias Detection** — χ² statistical test on recruiter decisions
 - **Real-time Dashboard** — Recharts analytics via Kafka event stream
+- **Modular UI** — Zustand state management, TailwindCSS styling, and React Portals
 - **Audit Trail** — every decision logged immutably to Kafka
 - **RBAC** — JWT + role-based route guards on both frontend and backend
