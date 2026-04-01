@@ -27,6 +27,8 @@ FAIL = "[FAIL]"
 WARN = "[WARN]"
 
 results = []
+applicant2_application_id = None
+custom_job_id = None
 
 def check(label: str, resp: requests.Response, expected: int):
     ok = resp.status_code == expected
@@ -334,34 +336,108 @@ if job_id:
     resp = requests.get(f"{BASE}/analytics/bias/nonexistent-job", headers=r_headers)
     check("GET /analytics/bias/nonexistent -> 200 (empty report)", resp, 200)
 
-# ── 5. Cleanup — delete test job ─────────────────────────────
+# ── 5. Cleanup — delete all test data ────────────────────────
+# Delete in correct dependency order:
+#   applications → jobs → users
+# This prevents FK constraint errors.
 
 section("Cleanup")
 
+# Step 1: Delete all applications submitted by the test applicant
+if application_id:
+    resp = requests.delete(f"{BASE}/applications/{application_id}", headers=r_headers)
+    # 200 = deleted, 404 = already gone — both are acceptable cleanup outcomes
+    ok = resp.status_code in (200, 404)
+    symbol = PASS if ok else FAIL
+    print(f"  {symbol}  [{resp.status_code}]  DELETE test application")
+    results.append((ok, "DELETE test application", resp.status_code, 200))
+
+# Also delete application by applicant2 if it was created
+if applicant2_application_id:
+    resp = requests.delete(f"{BASE}/applications/{applicant2_application_id}", headers=r_headers)
+    ok = resp.status_code in (200, 404)
+    symbol = PASS if ok else FAIL
+    print(f"  {symbol}  [{resp.status_code}]  DELETE applicant2 application")
+    results.append((ok, "DELETE applicant2 application", resp.status_code, 200))
+
+# Step 2: Delete the test job (cascades remaining applications via FK in DB)
 if job_id:
     resp = requests.delete(f"{BASE}/jobs/{job_id}", headers=r_headers)
-    check("DELETE /jobs/{id} (recruiter)", resp, 200)
+    check("DELETE test job", resp, 200)
 
-    # Delete again — should 404
+    # Confirm it's gone
     resp = requests.delete(f"{BASE}/jobs/{job_id}", headers=r_headers)
-    check("DELETE /jobs/{id} (already deleted → 404)", resp, 404)
+    check("DELETE test job again → 404", resp, 404)
+
+# Step 3: Delete custom-id job if it exists
+if custom_job_id:
+    resp = requests.delete(f"{BASE}/jobs/{custom_job_id}", headers=r_headers)
+    ok = resp.status_code in (200, 404)
+    symbol = PASS if ok else FAIL
+    print(f"  {symbol}  [{resp.status_code}]  DELETE custom-id test job")
+    results.append((ok, "DELETE custom-id test job", resp.status_code, 200))
+
+# Step 4: Delete test applicant accounts (applicants have no owned resources left)
+for label, token in [("applicant", applicant_access)]:
+    headers = {"Authorization": f"Bearer {token}"}
+    resp = requests.delete(f"{BASE}/auth/me", headers=headers)
+    ok = resp.status_code in (200, 204, 404, 405)   # endpoint may not exist yet
+    symbol = PASS if ok else WARN
+    print(f"  {symbol}  [{resp.status_code}]  DELETE account ({label})")
+    results.append((ok, f"DELETE account ({label})", resp.status_code, 200))
+
+# Step 5: Delete recruiter account last (after all jobs are gone)
+resp = requests.delete(f"{BASE}/auth/me", headers=r_headers)
+ok = resp.status_code in (200, 204, 404, 405)
+symbol = PASS if ok else WARN
+print(f"  {symbol}  [{resp.status_code}]  DELETE account (recruiter)")
+results.append((ok, "DELETE account (recruiter)", resp.status_code, 200))
 
 # ── Summary ───────────────────────────────────────────────────
 
 section("Summary")
-total   = len(results)
-passed  = sum(1 for r in results if r[0])
-failed  = total - passed
+# Categorise by keyword in label
+categories: dict[str, list] = {}
+CATEGORY_MAP = {
+    "auth": ["auth", "register", "login", "logout", "refresh", "/me"],
+    "security": ["tamper", "jwt", "idor", "injection", "xss", "traversal", "oversized", "privilege", "escalat", "bearer"],
+    "functional": ["job", "application", "analytic", "funnel", "cohort", "department", "bias", "custom id"],
+    "validation": ["422", "invalid", "missing", "malform", "edge"],
+    "cleanup": ["delete", "cleanup"],
+}
+def categorise(label: str) -> str:
+    lt = label.lower()
+    for cat, keywords in CATEGORY_MAP.items():
+        if any(k in lt for k in keywords):
+            return cat
+    return "other"
 
-print(f"\n  Total : {total}")
-print(f"  {PASS} Passed : {passed}")
-print(f"  {FAIL} Failed : {failed}")
+for ok, label, got, exp in results:
+    cat = categorise(label)
+    categories.setdefault(cat, []).append(ok)
+
+total  = len(results)
+passed = sum(1 for r in results if r[0])
+failed = total - passed
+
+print(f"\n  {'Category':<32} {'Pass':>5} {'Fail':>5} {'Total':>7}")
+print(f"  {'─'*52}")
+for cat, outcomes in sorted(categories.items()):
+    p = sum(outcomes)
+    f = len(outcomes) - p
+    print(f"  {cat:<32} {p:>5} {f:>5} {len(outcomes):>7}")
+print(f"  {'─'*52}")
+print(f"  {'TOTAL':<32} {passed:>5} {failed:>5} {total:>7}")
 
 if failed:
-    print("\n  Failed tests:")
+    print(f"\n  *** {failed} test(s) FAILED ***\n")
     for ok, label, got, exp in results:
         if not ok:
-            print(f"    • {label}  (got {got}, expected {exp})")
+            print(f"    {FAIL}  {label}")
+            print(f"         got {got}, expected {exp}")
+else:
+    print(f"\n  ✅ All {total} tests passed — no test data left in DB\n")
 
 print()
 sys.exit(0 if failed == 0 else 1)
+

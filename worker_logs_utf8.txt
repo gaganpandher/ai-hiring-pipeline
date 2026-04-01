@@ -1,0 +1,16 @@
+﻿2026-03-26 14:12:25,358 INFO sqlalchemy.engine.Engine SELECT DATABASE()
+2026-03-26 14:12:25,358 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-26 14:12:25,365 INFO sqlalchemy.engine.Engine SELECT @@sql_mode
+2026-03-26 14:12:25,365 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-26 14:12:25,368 INFO sqlalchemy.engine.Engine SELECT @@lower_case_table_names
+2026-03-26 14:12:25,368 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-26 14:12:25,372 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-26 14:12:25,377 INFO sqlalchemy.engine.Engine SELECT applications.id, applications.job_id, applications.applicant_id, applications.resume_path, applications.cover_letter, applications.linkedin_url, applications.portfolio_url, applications.status, applications.recruiter_notes, applications.submitted_at, applications.reviewed_at, applications.decided_at, applications.updated_at 
+FROM applications 
+WHERE applications.id = %s
+2026-03-26 14:12:25,377 INFO sqlalchemy.engine.Engine [generated in 0.00118s] ('4dfab274-ac48-4269-ba0d-2af1fa6177c1',)
+2026-03-26 14:12:25,386 INFO sqlalchemy.engine.Engine UPDATE applications SET status=%s, updated_at=%s WHERE applications.id = %s
+2026-03-26 14:12:25,386 INFO sqlalchemy.engine.Engine [generated in 0.00046s] ('SCORED', datetime.datetime(2026, 3, 26, 14, 12, 25, 386468, tzinfo=datetime.timezone.utc), '4dfab274-ac48-4269-ba0d-2af1fa6177c1')
+2026-03-26 14:12:25,392 INFO sqlalchemy.engine.Engine INSERT INTO scores (id, application_id, overall_score, skills_score, experience_score, education_score, keyword_score, breakdown, model_version, scored_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+2026-03-26 14:12:25,392 INFO sqlalchemy.engine.Engine [generated in 0.00047s] ('60dae665-7215-4384-9e36-025da75af3cb', '4dfab274-ac48-4269-ba0d-2af1fa6177c1', 56, 50, 0, 60, 100.0, '{"matched_keywords": ["python", "rest"], "missing_keywords": [], "experience_years": 0}', 'v1.0', datetime.datetime(2026, 3, 26, 14, 12, 25, 292044, tzinfo=datetime.timezone.utc))
+2026-03-26 14:12:25,401 INFO sqlalchemy.engine.Engine COMMIT

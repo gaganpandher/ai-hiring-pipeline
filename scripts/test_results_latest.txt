@@ -1,0 +1,154 @@
+﻿
+--------------------------------------------------------------------
+  1 ┬╖ Authentication ΓÇö register / login / token  [auth]
+--------------------------------------------------------------------
+  [PASS]  [201]  Register recruiter
+  [PASS]  [201]  Register applicant
+  [PASS]  [201]  Register applicant2 (IDOR target)
+  [PASS]  [409]  Duplicate register ΓåÆ 409
+  [PASS]  [200]  Login recruiter
+  [PASS]  [401]  Login bad password ΓåÆ 401
+  [PASS]  [401]  Login unknown user ΓåÆ 401/404
+  [PASS]  [200]  GET /me (authenticated)
+  [PASS]  [401]  GET /me (no token) ΓåÆ 401
+  [PASS]  [200]  POST /auth/refresh
+  [PASS]  [401]  POST /auth/refresh (bad token) ΓåÆ 401
+
+--------------------------------------------------------------------
+  2 ┬╖ Security ΓÇö JWT tampering & token abuse  [security]
+--------------------------------------------------------------------
+  [PASS]  [401]  Tampered JWT (roleΓåÆadmin) ΓåÆ 401/403
+  [PASS]  [401]  Expired/random JWT ΓåÆ 401
+  [PASS]  [401]  No Bearer prefix ΓåÆ 401
+  [PASS]  [401]  Empty Authorization header ΓåÆ 401
+
+--------------------------------------------------------------------
+  3 ┬╖ Jobs ΓÇö CRUD + role enforcement  [functional]
+--------------------------------------------------------------------
+  [PASS]  [200]  GET /jobs (public)
+  [PASS]  [200]  GET /jobs?status=open&per_page=5
+  [PASS]  [201]  POST /jobs (recruiter)
+  [PASS]  [403]  POST /jobs (applicant ΓåÆ 403)
+  [PASS]  [401]  POST /jobs (no auth ΓåÆ 401)
+  [PASS]  [200]  GET /jobs/{id}
+  [PASS]  [404]  GET /jobs/nonexistent ΓåÆ 404
+  [PASS]  [200]  PATCH /jobs/{id} (recruiter)
+  [PASS]  [403]  PATCH /jobs/{id} (applicant ΓåÆ 403)
+
+--------------------------------------------------------------------
+  4 ┬╖ Security ΓÇö SQL injection & XSS payloads  [security]
+--------------------------------------------------------------------
+  [PASS]  [200]  SQL injection in ?department (should not 500)
+  [PASS]  [200]  SQL injection in ?department (should not 500)
+  [PASS]  [200]  SQL injection in ?department (should not 500)
+  [PASS]  [200]  SQL injection in ?department (should not 500)
+  [PASS]  [200]  XSS probe in ?title query param
+  [PASS]  [200]  XSS probe in ?title query param
+  [PASS]  [200]  XSS probe in ?title query param
+  [PASS]  [200]  XSS probe in ?title query param
+  [PASS]  [201]  SQL injection in POST /jobs body (should not 500)
+
+--------------------------------------------------------------------
+  5 ┬╖ Applications ΓÇö submit / IDOR / access control  [functional+security]
+--------------------------------------------------------------------
+  [PASS]  [200]  PATCH /jobs/{id}/status -> open (before applying)
+  [PASS]  [201]  POST /applications (applicant)
+  [PASS]  [409]  POST /applications (duplicate ΓåÆ 409)
+  [PASS]  [403]  POST /applications (recruiter ΓåÆ 403)
+  [PASS]  [201]  POST /applications (applicant2)
+  [PASS]  [200]  GET /applications (recruiter ΓÇö all)
+  [PASS]  [200]  GET /applications (applicant ΓÇö own only)
+  [PASS]  [401]  GET /applications (no auth ΓåÆ 401)
+
+--------------------------------------------------------------------
+  5b ┬╖ Security ΓÇö IDOR (Insecure Direct Object Reference)  [security]
+--------------------------------------------------------------------
+  [PASS]  [403]  IDOR: applicant reads other's application (must 403/404)
+  [PASS]  [403]  IDOR: applicant self-promote to hired ΓåÆ 403
+  [PASS]  [403]  IDOR: applicant makes decision on other's app (must 403/404)
+  [PASS]  [200]  PATCH /applications/{id}/decision (recruiter ΓåÆ shortlist)
+
+--------------------------------------------------------------------
+  6 ┬╖ Input validation ΓÇö malformed bodies & edge cases  [validation]
+--------------------------------------------------------------------
+  [PASS]  [422]  Register empty body ΓåÆ 422
+  [PASS]  [422]  Register invalid email ΓåÆ 422
+  [PASS]  [422]  Register invalid role ΓåÆ 422
+  [PASS]  [422]  POST /jobs missing title ΓåÆ 422
+  [PASS]  [422]  POST /jobs salary_min > salary_max
+  [PASS]  [422]  PATCH decision invalid status ΓåÆ 422
+  [PASS]  [422]  GET /jobs?per_page=0
+  [PASS]  [422]  GET /jobs?page=-1
+
+--------------------------------------------------------------------
+  7 ┬╖ Security ΓÇö oversized payloads & path traversal  [security]
+--------------------------------------------------------------------
+  [FAIL]  [500]  100KB cover letter (must not 500)
+  [PASS]  [404]  Path traversal in job ID: '../../../etc/passwd'
+  [PASS]  [404]  Path traversal in job ID: '..%2F..%2Fetc%2Fpasswd'
+  [PASS]  [404]  Path traversal in job ID: "'; SELECT * FROM users; --"
+  [PASS]  [405]  HTTP method override via header (must not delete)
+
+--------------------------------------------------------------------
+  8 ┬╖ Analytics ΓÇö access control + bias report  [functional+security]
+--------------------------------------------------------------------
+  [PASS]  [200]  GET /analytics/dashboard (recruiter)
+  [PASS]  [403]  GET /analytics/dashboard (applicant ΓåÆ 403)
+  [PASS]  [401]  GET /analytics/dashboard (no auth ΓåÆ 401)
+  [PASS]  [200]  GET /analytics/funnel (recruiter)
+  [PASS]  [403]  GET /analytics/funnel (applicant ΓåÆ 403)
+  [PASS]  [200]  GET /analytics/cohorts?months=6 (recruiter)
+  [PASS]  [403]  GET /analytics/cohorts (applicant ΓåÆ 403)
+  [PASS]  [422]  GET /analytics/cohorts?months=999 ΓåÆ 422
+  [PASS]  [200]  GET /analytics/departments (recruiter)
+  [PASS]  [200]  GET /analytics/bias/{job_id} (recruiter)
+  [PASS]  [403]  GET /analytics/bias/{job_id} (applicant ΓåÆ 403)
+  [PASS]  [200]  GET /analytics/bias/nonexistent
+
+--------------------------------------------------------------------
+  9 ┬╖ Security ΓÇö privilege escalation attempts  [security]
+--------------------------------------------------------------------
+  [PASS]  [422]  Register as admin role ΓåÆ 422/400
+  [PASS]  [403]  Applicant PATCH /jobs ΓåÆ 403
+  [PASS]  [403]  Applicant DELETE /jobs ΓåÆ 403
+  [PASS]  [403]  Applicant PATCH /jobs/status ΓåÆ 403
+
+--------------------------------------------------------------------
+  10 ┬╖ Custom Job ID feature  [functional]
+--------------------------------------------------------------------
+  [PASS]  [201]  POST /jobs with custom id
+  [PASS]  Custom ID preserved: expected='ENG-926555', got='ENG-926555'
+  [PASS]  [422]  POST /jobs duplicate custom id -> 409 or 422 (expected 409/400/422)
+
+--------------------------------------------------------------------
+  11 ┬╖ Cleanup  [cleanup]
+--------------------------------------------------------------------
+  [PASS]  [200]  DELETE /jobs/e0c0e55d-ac01-497d-9356-c82115d6f116
+  [PASS]  [404]  DELETE /jobs/e0c0e55d-ac01-497d-9356-c82115d6f116 again -> 404
+  [PASS]  [200]  DELETE /jobs/ENG-926555
+  [PASS]  [404]  DELETE /jobs/ENG-926555 again -> 404
+  [FAIL]  [500]  DELETE /auth/account (recruiter)  => {'error': 'IntegrityError', 'detail': "(pymysql.err.IntegrityError) (1451, 'Cannot delete or update 
+  [PASS]  [200]  DELETE /auth/account (applicant)
+  [PASS]  [200]  DELETE /auth/account (applicant2)
+
+--------------------------------------------------------------------
+  SUMMARY REPORT
+--------------------------------------------------------------------
+
+  Category                        Pass  Fail   Total
+  ----------------------------------------------------
+  auth                              11     0      11
+  cleanup                            6     1       7
+  functional                        27     0      27
+  security                          29     1      30
+  validation                         9     0       9
+  ----------------------------------------------------
+  TOTAL                             82     2      84
+
+  *** 2 test(s) FAILED ***
+
+    [FAIL]  Oversized cover letter (100KB)
+         got 500, expected 422  [security]
+    [FAIL]  DELETE /auth/account (recruiter)
+         got 500, expected 200  [cleanup]
+

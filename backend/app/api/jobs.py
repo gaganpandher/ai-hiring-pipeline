@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
 from app.core.database import get_db
-from app.core.security import oauth2_scheme, decode_token
+from app.core.security import oauth2_scheme, decode_token, get_optional_user_payload
 from app.models.job import JobStatus
 from app.schemas.job import JobCreate, JobUpdate, JobResponse
 from app.schemas.common import SuccessResponse, PaginatedResponse, MessageResponse
@@ -62,12 +62,26 @@ async def list_jobs(
     page:       int                 = Query(1,    ge=1),
     per_page:   int                 = Query(20,   ge=1, le=100),
     db: AsyncSession = Depends(get_db),
+    payload: dict | None = Depends(get_optional_user_payload)
 ):
     """
-    Public endpoint — no auth required.\n
-    Applicants use this to browse open jobs.\n
+    Public endpoint — applicant browses open jobs, recruiter browses their jobs, admin browses all jobs.\n
     Supports filtering by status, department, and free-text search.
     """
+    recruiter_id = None
+    force_open_only = False
+
+    if payload:
+        role = payload.get("role")
+        if role == "recruiter":
+            recruiter_id = payload.get("sub")
+        elif role == "admin":
+            pass # See all jobs, all statuses
+        else:
+            force_open_only = True
+    else:
+        force_open_only = True
+        
     return await job_service.list_jobs(
         db=db,
         status=status,
@@ -75,6 +89,8 @@ async def list_jobs(
         search=search,
         page=page,
         per_page=per_page,
+        recruiter_id=recruiter_id,
+        force_open_only=force_open_only
     )
 
 

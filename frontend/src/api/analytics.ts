@@ -1,34 +1,47 @@
 import api from './client'
 
 export interface DashboardStats {
-  open_jobs: number
+  total_jobs_open: number           // was open_jobs
   total_applications: number
   applications_this_week: number
-  avg_ai_score: number
-  avg_days_to_hire: number
-  active_bias_alerts: number
+  avg_score_all_time: number        // was avg_ai_score
+  avg_days_to_hire?: number | null
+  active_bias_flags: number         // was active_bias_alerts
   hired_this_month: number
   pipeline_health: string
 }
 
+// Backend funnel returns nested stages array
+export interface FunnelStage {
+  stage: string
+  count: number
+  percentage: number
+  avg_days?: number | null
+}
+
 export interface FunnelData {
-  applied: number
-  scored: number
-  reviewed: number
-  shortlisted: number
+  total_applied: number
+  stages: FunnelStage[]
+  job_id?: string | null
+  job_title?: string | null
+  generated_at: string
+}
+
+// Backend cohort returns nested points array
+export interface CohortPoint {
+  period: string        // e.g. "2026-01"
+  applications: number
   hired: number
   rejected: number
-  avg_days_in_stage: Record<string, number>
+  avg_score: number
+  avg_days_to_hire?: number | null
 }
 
 export interface CohortData {
-  cohorts: {
-    month: string
-    total_applications: number
-    hired: number
-    rejected: number
-    still_active: number
-  }[]
+  points: CohortPoint[]
+  department?: string | null
+  granularity: string
+  generated_at: string
 }
 
 export const analyticsApi = {

@@ -87,6 +87,8 @@ class JobService:
         search: str | None = None,
         page: int = 1,
         per_page: int = 20,
+        recruiter_id: str | None = None,
+        force_open_only: bool = False,
     ) -> PaginatedResponse[JobResponse]:
 
         # Build base query
@@ -103,6 +105,11 @@ class JobService:
                 Job.title.ilike(f"%{search}%"),
                 Job.description.ilike(f"%{search}%"),
             ))
+        if recruiter_id:
+            filters.append(Job.poster_id == recruiter_id)
+        if force_open_only:
+            filters.append(Job.status == JobStatus.OPEN)
+
         if filters:
             query = query.where(and_(*filters))
 

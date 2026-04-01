@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.core.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
+optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token", auto_error=False)
 
 def hash_password(password: str) -> str:
     pwd_bytes = password.encode("utf-8")
@@ -48,6 +49,15 @@ def decode_token(token: str) -> dict:
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         ) from e
+
+
+def get_optional_user_payload(token: str | None = Depends(optional_oauth2_scheme)) -> dict | None:
+    if not token:
+        return None
+    try:
+        return decode_token(token)
+    except Exception:
+        return None
 
 
 class Role:

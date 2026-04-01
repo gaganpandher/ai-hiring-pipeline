@@ -41,11 +41,11 @@ export function ScoreCard({ title, value, icon: Icon, trend, color }: ScoreCardP
 
 interface ScoreCardsContainerProps {
   stats: {
-    open_jobs: number
+    total_jobs_open: number
     total_applications: number
     applications_this_week: number
-    avg_ai_score: number
-    avg_days_to_hire: number
+    avg_score_all_time: number
+    avg_days_to_hire?: number | null
   } | undefined
 }
 
@@ -54,28 +54,28 @@ export default function ScoreCards({ stats }: ScoreCardsContainerProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
       <ScoreCard
         title="Open Jobs"
-        value={stats?.open_jobs || 0}
+        value={stats?.total_jobs_open ?? 0}
         icon={Briefcase}
         trend="+2 this week"
         color="indigo"
       />
       <ScoreCard
         title="Total Applications"
-        value={stats?.total_applications || 0}
+        value={stats?.total_applications ?? 0}
         icon={Users}
-        trend={`+${stats?.applications_this_week || 0} this week`}
+        trend={`+${stats?.applications_this_week ?? 0} this week`}
         color="blue"
       />
       <ScoreCard
         title="Average AI Score"
-        value={stats?.avg_ai_score ? stats.avg_ai_score.toFixed(1) : 0}
+        value={stats?.avg_score_all_time ? stats.avg_score_all_time.toFixed(1) : 0}
         icon={Sparkles}
         trend="Top 15% threshold"
         color="violet"
       />
       <ScoreCard
         title="Avg Days to Hire"
-        value={stats?.avg_days_to_hire ? stats.avg_days_to_hire.toFixed(1) : 0}
+        value={stats?.avg_days_to_hire ? stats.avg_days_to_hire.toFixed(1) : '—'}
         icon={Clock}
         trend="-2.4 days vs prev"
         color="emerald"
